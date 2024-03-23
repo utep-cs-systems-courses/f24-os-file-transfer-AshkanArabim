@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 
-import os, sys, argparse, socket, struct
+import os, sys, argparse, socket, struct, time
 
 
 # copied straight out of my archiver and modified, because I'm lazy
@@ -31,7 +31,9 @@ class OutOfBandExtractor:
                 break
 
             # make directories if they don't exist
-            os.makedirs("/".join(filename.split("/")[:-1]), exist_ok=True)
+            dirname = "/".join(filename.split("/")[:-1])
+            if len(dirname) > 0:
+                os.makedirs(dirname, exist_ok=True)
 
             # create files with name
             file_fd = os.open(filename, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
@@ -48,12 +50,18 @@ class OutOfBandExtractor:
 
 def receiveFiles(connAddr):
     # note: once thread comes here, it can't go back; it will die
+    
+    # adding sleep timer to demonstrate ability to talk to multiple clients
+    time.sleep(2)
+    
     sock, addr = connAddr
     print(f"Child: pid={os.getpid()} connected to client at {addr}")
 
     # receive stream and save files
     extractor = OutOfBandExtractor(sock)
     extractor.extract()
+    
+    print(f"saved files for process {os.getpid()}")
     
     sock.shutdown(socket.SHUT_WR)
     sys.exit(0)
