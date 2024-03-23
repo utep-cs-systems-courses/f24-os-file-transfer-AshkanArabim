@@ -62,7 +62,7 @@ if __name__ == "__main__":
         description="Receives out-of-band framed data, extracts it to disk"
     )
     parser.add_argument("-p", default=50001, help="port to listen on")
-    parser.add_argument("-a", default="127.0.0.1", help="port to listen on")
+    parser.add_argument("-a", default="127.0.0.1", help="address to listen on")
     args = parser.parse_args()
 
     pidAddr = {}
@@ -88,9 +88,6 @@ if __name__ == "__main__":
             else:
                 break  # no zombies; break from loop
         print(f"Currently {len(pidAddr.keys())} clients")
-
-        # while data still coming in, extract content until nothing left
-        # ideally, pass file descriptor directly to framer extractor; it's already a package
 
         try:
             connSockAddr = listenSock.accept()  # accept connection from a new client
