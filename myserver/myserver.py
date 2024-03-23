@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+
+
 import os, sys, argparse, socket, struct
 
 
@@ -38,7 +41,7 @@ class OutOfBandExtractor:
             while read_idx < file_size:
                 buffer_size = min(100, file_size - read_idx)
                 read_idx += buffer_size
-                buffer = self.sock(buffer_size)
+                buffer = self.sock.recv(buffer_size)
 
                 os.write(file_fd, buffer)
 
@@ -49,7 +52,7 @@ def receiveFiles(connAddr):
     print(f"Child: pid={os.getpid()} connected to client at {addr}")
 
     # receive stream and save files
-    extractor = OutOfBandExtractor("out", sock)
+    extractor = OutOfBandExtractor(sock)
     extractor.extract()
     
     sock.shutdown(socket.SHUT_WR)
